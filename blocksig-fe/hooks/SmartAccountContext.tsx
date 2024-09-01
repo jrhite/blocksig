@@ -1,4 +1,8 @@
-import { ConnectedWallet, useWallets } from "@privy-io/react-auth";
+import {
+  ConnectedWallet,
+  useLinkWithSiwe,
+  useWallets,
+} from "@privy-io/react-auth";
 
 import {
   ENTRYPOINT_ADDRESS_V06,
@@ -49,6 +53,9 @@ export const SmartAccountProvider = ({
 }) => {
   // Get a list of all of the wallets (EOAs) the user has connected to your site
   const { wallets } = useWallets();
+
+  const { generateSiweMessage, linkWithSiwe } = useLinkWithSiwe();
+
   // Find the embedded wallet by finding the entry in the list with a `walletClientType` of 'privy'
   const embeddedWallet = wallets.find(
     (wallet) => wallet.walletClientType === "privy"
@@ -162,6 +169,34 @@ export const SmartAccountProvider = ({
         smartAccountAddress,
         smartAccountReady,
       });
+
+      /*
+       * link smart wallet to the user's EOA or embedded wallet
+       *
+       * https://docs.privy.io/guide/react/recipes/account-abstraction/address
+       *
+       * const message = await generateSiweMessage({
+       *   address: eoa.address,
+       *   chainId: eoa.chainId,
+       * });
+       *
+       * const signature = await pkpWallet.signMessage(message);
+       *
+       * await linkWithSiwe({
+       *   // The SIWE message generated from `generateSiweMessage`
+       *   message: message,
+       *   // The same `chainId` you passed to `generateSiweMessage`
+       *   chainId: eoa.chainId,
+       *   // The signature from the smart account
+       *   signature: signature,
+       *   // You can replace this with whatever wallet client you'd like to
+       *   // associate with the smart account
+       *   walletClientType: 'privy_smart_account',
+       *   // You can replace this with whatever connector type you'd like to
+       *   // associate with the smart account
+       *   connectorType: 'zerodev',
+       * });
+       */
 
       setEoa(eoa);
       setSmartAccountClient(smartAccountClient);
